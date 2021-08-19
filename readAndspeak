@@ -1,0 +1,589 @@
+2018/8/30
+
+makefile文件： 目标：依赖
+				 命令
+exe:socket.o threadpool.o mysql_conn.o
+	gcc *.o -o exe -lpthread -lmysqlclient
+socket.o:socket.c
+	gcc socket.c -c
+threadpool.o:threadpool.c
+	gcc threadpool.c -c
+mysql_conn.o:mysql_conn.c
+	gcc mysql_conn.c -c
+clean:
+	rm *.o exe
+
+字节序: int a = 高1234低 主机字节序(Little_Endian)低序低址4321 和 网络字节序(Big-Endian)低序高址1234
+
+1.char query[128];
+sprintf(query,"insert into reg_tb(usr_id,usr_name,usr_passwd,usr_telephone) values('%d',\"%s\",'%s','%s');",id,name,passwd,phonenum);
+printf("%s\n",query);
+将数据复制到参数str所指向的字符串数组
+
+2.char str[128] = "1990/12/30";
+	int time[3] = {0};
+	sscanf(str,"%d/%d/%d",time,time+1,time+2);//&time[0] &time[1] &time[2]
+	printf("%d年%d月%d日\n",time[0],time[1],time[2]);
+
+
+
+
+
+
+
+
+7、c++类中关键字static和const的作用？	
+	a.static 
+	(1)类中的static成员变量属于整个类所有，不属于任何对象，对类的所有对象只有一份拷贝，所有类对象共有的数据。
+	(2)static成员函数不具有this指针，而且static成员函数只能直接调用static成员变量。	
+	b.const	
+	(1)const修饰的成员变量，便是常成员变量，在定义时通常要被初始化，表示后面其值不希望被修改。
+	(2)const修饰的类的成员函数，内部不能修改类的成员数据，将成为只读函数，而且不允许在常成员函数中调用非常成员函数。
+	(3)如果const构成函数重载，非const类对象优先调用非const成员函数，常对象只能调用常成员函数。
+	(4)类外定义的const成员函数，在定义和声明时都需要用const来修饰。	
+	static:全局变量，限制变量的作用域，当前文件。静态函数，限制于本文件中使用。	static：局部变量，起作用的在一对{}内，生命周期长，整个程序运行期间。只在该{}内的函数中使用，但是其值不会销毁，下次在该值的基础上可以继续使用。
+	
+总结记忆：
+请指出static和const的作用？
+	static：
+	(1)函数体内static变量(局部静态变量)的作用范围为该函数体，不同于auto变量，该变量的内存只被分配一次，因此其值在下次调用的时候仍维持上次的值。
+	(2)在模块内的static全局变量可以被模块内所有函数访问，但不能被模块外其他函数访问。	(3)在模块内的static函数只可被这一模块内的其他函数调用，这个函数的使用范围在声明它的模块内。	(4)类中的static成员变量属于整个类所有，不属于任何对象，对类的所有对象只有一份拷贝，所有类对象共有的数据。	(5)类中的static成员函数属于整个类所有，不具有this指针，而且static成员函数只能直接调用static成员变量。
+	const:
+	(1)想要阻止一个变量被改变，可以使用const关键字。在定义const 变量时，通常要对其初始化。
+	(2)对指针来说，可以指定指针本身为const,也可以指定指针所指的数据为const,或者两者都可以。
+	(3)在一个函数声明中，const可以修饰形参，表明它是一个输入参数，在函数内部不能改变其值。
+	(4)对于类的成员函数，若指定其为const类型，则表明其是一个常函数，不能修改类的成员变量。
+	(5)对于类的成员函数，有时候必须指定其返回值类型为const,以使得其返回值不为"左值"。
+
+C++面向对象
+		类型检查    安全性  可维护性   代码复用      项目大小
+    c   支持较弱     差        差      缺少机制    开发大型项目较难
+   c++  比较严格   强(封装性)  高      支持(继承性)   容易(类和对象)
+   类和对象就好比图纸和机器人，图纸类经过实例化后变成对象也就是机器人。
+设计思想：把数据结构和对数据结构进行操作的方法封装成一个个对象。
+
+	面向对象的三大特征：
+		封装性：数据包含 (数据的安全性)；
+		继承性：解决代码重复使用；
+		多态性：代码的扩展(动态多态性);
+1、什么是引用？声明和使用"引用"要注意哪些问题？
+   a.引用就是某个变量的或对象的别名，本质还是地址操作，对引用的操作和对变量的操作，效果完全一样。
+   b.声明一个引用的时候一定要对其初始化，一旦声明一个对象或变量的引用，则该引用将不能再被申请为其他的变量或对象的引用。
+   c.引用不占内存空间。
+   d.不能建立数组的引用。 
+2、引用与指针的区别？
+	a.引用必须被初始化，不能为空，而指针可以为空。
+	b.引用初始化后不能改变，而指针可以随意改指向。
+	c.引用比指针更加安全。
+	d.引用不占内存空间只是对变量起了个别名，而指针则不然。
+	e."sizeof"引用得到的是引用所表示变量或对象的大小，而"sizeof"指针得到的是指针本身的大小。
+	f.指针可以有多级(*p,**p),而引用只有一级。
+	g.指针和引用的自增(++)运算意义不同。
+	可以有const指针，但是不能有const引用。
+3、重载和覆盖的区别？(overload and overried)
+	重载在同一个类中，可以具有不同的返回值类型，必须具有不同的参数列表;(构造函数)
+	覆盖是基类和派生类之间，必须保证函数的名称，参数列表，返回值不变。
+	
+	详解：
+		重载(多态性)：在同一类中允许存在多个同名函数，而这些函数的形参列表不同；覆盖：在派生类中存在一个完全相同的成员函数或数据成员。
+		重载，编译器会根据不同的应参列表对同名的函数进行名字改编，然后对这些同名的函数就有了不同的名称。
+		覆盖，也叫继承重写，派生类重新定义了基类的虚函数，如果基类的指针接收了不同的派生类对象地址，系统就会根据动态多态性的机制调到派生类重写函数。
+多态性：编译时的静态多态性，体现为函数重载；运行时的动态多态性，体现为虚函数(继承为前提)。(静态重载，虚动多态)
+	
+4、实现动态多态性的条件？
+	a.基类中有virtual函数(非静态)；
+	b.派生类中重写该函数；
+	c.基类指针或引用接收派生类的对象；
+	d.基类指针或引用调用虚函数。请注意：虚析构函数是个例外，没有第二步。
+原理：虚表
+	a.在编译时为基类创建一张虚表，同时将基类中虚函数的入口地址填入虚表；
+	b.当基类指针(引用)指向的对象发生改变时，会更新虚表；
+	c.当用基类指针(引用)访问虚函数时，系统会根据虚表中实际的函数地址来进行相应的函数调用。
+
+	c++编译器默认提供的4个类成员：构造函数、析构函数、拷贝构造函数、运算符重载函数
+	不允许重载的运算符： "." "*" "::" "?:" "sizeof"
+5、什么时候要用到虚析构函数？(派生类对象的地址 --->基类的指针)
+
+	如果基类的指针接收了派生类的对象地址，通过基类的指针来delete派生类的对象的时候，就需要用虚析构函数，否则delete会不彻底，这样的delete操作只会删除从基类继承下来的对象空间，无法删除新派生的对象空间，造成内存泄露。
+	需要注意的是：构造函数不能声明为虚函数。
+	
+6、哪几种情况必须用到初始化列表？
+
+初始化列表：(存在一个类中的构造函数之后，以一个冒号开始，逗号分隔开来的数据成员列表)
+初始化列表其实是一种赋值操作。	
+	a.类中常成员变量的初始化
+	b.类中引用做数据成员。(引用必须定义并初始化)
+	c.向基类进行参数传递 (基参传递)
+	d.类中有对象成员，但对象成员没有无参的构造。(没有无参的构造即不能直接实例化对象必须通过初始化列表实例化对象并赋值。)
+
+公有继承基类中的private成员在派生类中仍是private是错误的，有一种说法称之为"私私有"，派生类内不能引用基类的私有成员。
+	
+	
+8、拷贝构造函数在哪几种情况下会被调用？(类的对象)
+	a.当类的一个对象去初始化该类的另一个对象。
+	b.函数的形参是类的对象，调用函数进行形参和实参结合时。
+	c.如果函数的返回值是类的对象，函数调用完成返回时。
+9、什么时候必须重写拷贝构造函数？
+	当构造函数设计到动态存储分配空间的时候要重写拷贝构造，深拷贝。
+		浅拷贝，地址拷贝，double free
+		深拷贝，数据拷贝。
+		
+10、多继承：从多个类派生
+	(1)产生的二义性问题:
+		继承自基类的成员具有重名时，对重名成员的模糊访问，引起二义性问题。
+		解决方法：指明来源
+		d.A::x 利用基类+作用域符(::)来说明继承下来的成员来自于哪一个基类。
+	(2)多继承设计的规则：
+		一、支配原则：
+			如果派生类中有和从基类继承下来的成员重名的成员，优先使用派生类中的成员。
+		二、赋值兼容原则：
+			a.对象赋值(可以将派生类对象的值赋给基类对象。反之不行)  b基类对象 = d派生对象;
+			b.地址赋值(派生类对象地址赋值给基类指针变量)只访问继承来的
+			c.引用赋值(派生类对象赋值给基类的引用)只访问继承来的
+11、动态分配和释放空间(new 和 delete)
+	new:给对象分配空间时自动调用构造函数，初始化属性成员，带入实参。
+	delete:释放空间自动调用析构函数。
+	
+	int *p = new int(5);//分配一个整型空间，赋值5，用一个整形指针P指向该空间。用一个整形指针P指向该空间。
+	delete p;
+	
+	int *p = new int [5];//分配五个整形空间的区域，用一个整型指针指向该空间，用delete []p 释放。
+	
+	注:类内成员一旦用new开辟空间，必须显式定义一个析构函数，然后在析构函数中delete释放空间。
+	new和malloc：new是关键字，而malloc是函数。
+	new引起构造函数调用，在堆上开辟空间时可以初始化带上实参。
+	返回值，malloc返回值是void*,任意类型的指针；new返回值为new后类型。
+	
+2018/8/31
+文件编程：
+文件操作，1系统调用，最直接的方式
+		a.打开文件 int fd = open(pathname,flags);
+				   int fd = open(pathname,flag|O_CREAT,mode);
+				   
+		b.读取文件 size_t len = read(fd,buf,sizeof(buf)-1);//读入buf
+		c.写入文件 size_t len = write(fd,buf,strlen(buf));//写入文件
+		
+		
+		d.移动文件指针 ：更灵活操作文件内容
+		
+		off_t offset = lseek(fd,off偏移量,whence); whence SEEK_SET,SEEK_CUR,SEEK_END；
+		offset 相对于文件头部的偏移量，即当前文件的指针位置。、、
+		
+		文件状态：struct stat st;
+		stat(pathname,&st);
+		fstat(fd,&st);只能用于一个已打开文件的状态信息，fd.
+		
+		文件权限 access (pathname,mode);
+				注：若pathname指定的是一个目录，mode只能取F_OK，来判断目录是否存在。
+		文件关闭 close(fd);
+		
+2、库函数调用方式
+	a.打开 FILE* fp = fopen(pathname,mode) r w覆盖/创建 a创建/加尾 + b binary 二进制形式打开
+	
+	b.读取 size_t len = fread(buf,1,sizeof(buf)-1,fp);
+	c.写入 size_t len = fwrite(buf,1,sizeof(buf)-1,fp);
+	
+	d.移动文件指针 int fs = fseek(fp,offset,whence);返回值表示文件是否移动成功，成功返回0，失败返回-1.
+				int size = ftell(fp);//返回当前位置到文件首部字节数。
+	e.关闭文件 fclose(fp);
+	
+	f.获取字符至fp int fgetc(fp);	将fp中的字符写入新的文件流指针中fp_new int fputc(ch,fp_new);
+	eg:		char ch;
+			while(EOF != (ch =fgetc(fp)))
+			{
+				fputc(ch,fp_new);//复制
+			}
+			while(1 == read(fd,&ch,1))//遍历
+			{
+				putchar(ch);
+			}
+	g: char* fgets(buf,sizeof(buf)-1,fp);//按行读取字符串到buf
+	   int fputs(buf,fp);//将buf中的字符串按行写入fp;
+	   
+	   eg:fputs(fgets(buf,80,stdin),stdout);//键盘输入至buf,再通过buf输出至屏幕显示器
+2018/8/31
+	1、进程：process(多任务并发)
+	a.进程是程序的一次运行活动；
+	b.进程是操作系统资源分配的最小单位；
+	c.进程是操作系统结构的基础；(操作系统包含：设备驱动程序，文件系统，进程、网络、内存~管理程序)
+	d.进程是线程的容器。
+进程的唯一标识，进程号(进程ID)，是一个正整数。
+	进程存在的唯一标识是，进程控制块(PCB process control block),描述和表示一个进程的变化。(进程的描述信息，控制信息，资源信息)
+	
+	Linux中进程控制块中每一项都是通过task_struct结构体来表示，定义在#include<linux/sched.h>中。
+	
+	进程的特点：(动态、并发、独立、异步、结构)
+	动态性：进程是动态产生，动态消亡的。
+	并发性：多个进程可以同时运行在内存空间中。
+	独立性：每个进程在各自虚拟的内存空间中，互不干扰。
+	异步性：由于进程相互制约，进程各自按照不可预知的速度推进。
+	结构性：栈(临时变量)、堆(动态申请的变量)、数据区(未初始化的全局变量静态变量BSS,只读数据段：初始化的全局变量，静态变量，常量)、代码区(程序代码)。	
+	
+	运行 就绪 阻塞 停止
+	
+	
+	2、进程间的相互通信(IPC Inter-Process  Communication)
+	：进程间进行数据传递，数据共享；进程控制，时间通知。
+	
+	现在Linux使用的进程间通信的方式：
+	(1)无名管道 和 有名管道
+	(2)消息队列
+	(3)共享内存
+	
+	(4)信号量
+	(5)信号signal
+	(6)套接字 socket通信
+	
+	1.匿名管道pipe：a.创建int fd[2];pipe(fd[2]);一旦创建获取fd[0]读端描述符。
+					b.读写，关闭。可利用文件操作系统调用方式操作；
+					实现:让父进程先创建匿名管道后，再fork出来子进程，(保证父子进程访问同一管道接口)子进程由于完全拷贝父进程的地址空间，子进程就会获得读写两端的描述符，可以和父进程利用无名管道来通信。
+					缺点:只有64KB，只能用于父子进程或者兄弟进程之间的通信，而且还容易引起阻塞问题。
+	2.有名管道：可以用于不相关进程之间的通信。mkfifo ->myfifo 
+		创建mkfifo(path,0600) 				      打开，读写关闭，可利用文件操作系统调用方式来实现。
+		实现：由一个进程创建有名管道，其余进程利用管道名称找到管道后，打开再获取描述符，便可通信。
+		缺点：只有64KB,易阻塞，操作较复杂，创建后须打开才能操作。
+		
+	3、共享内存：两个不相关进程间共享，访问同一物理内存空间。效率高，速度快，容量大；缺点同步问题。
+		创建共享内存---->获取共享内存ID---->映射共享内存----->使用共享内存------>分离------->回收
+				  shmget------------------>shmat(shmid,NULL，0)------------------------>shmdt(paddr)------>shmctl
+	
+-------重点***数据库接口函数：
+   步骤：	开始--->创建mySQL变量--->初始化mySQL变量--->连接数据库--->数据库操作/执行SQL操作--->储存结果集--->获取查询结果--->释放结果集--->关闭连接
+		a.创建mySQL: MYSQL mysql_hander;
+		b.初始化变量：mysql_init(&mysql_hander);
+		c.连接数据库:mysql_real_connect(&mysql_hander,.....);
+		//执行SQL语句
+		sprintf(query,".....%S...%d....%D",.....);//将SQL语句写入query这个字符串数组中
+		d.SQL语句：int mysql_real_query(&mysql_hander,query,strlen(query));
+		e.储存结果集： MYSQL_RES *result = mysql_store_result(&mysql_hander);
+		
+********f.获取查询结果     字符串数组 MYSQL_ROW mysql_fetch_row(result);
+		                   结构体数组 MYSQL_FIELD *fields = mysql_fetch_fields(result);
+						    unsigned int  fnum = mysql_num_fields(result);//列数
+						
+						for(i = 0;i<fnum;i++)
+						{
+							printf("%S\t",fileds[i].name);//取各个字段名称
+
+						}
+						while(row = mysql_fetch_row(result))//自移游标
+						{
+							for(i = 0;i<fnum;i++)
+								printf("%S\t",row[i]);//打一行
+						}
+号外：	int total_rows = mysql_num_rows(res);//获得结果集的行数
+	int total_cols = mysql_field_count(&mysql_handler);//列数	
+	unsigned int  fnum = mysql_num_fields(result);//列数				
+						
+		g.释放结果集：mysql_free_result(result);
+		h.关闭连接：mysql_close(&mysql_hander);
+		
+		获取字段数量： unsigned int fnums = mysql_num_fields(MYSQL_RES*result);
+	
+	问题：1、数据库的事务是什么？
+			答：事务(transaction)是作为一个单元的一组有序的数据库操作。
+				若是组中的所有操作成功，则认为事务成功，否则事务失败。如果所有操作完成，事务则提交，其修改将作用于所有其他数据库进程，若是一个操作失败，则事务将回滚，该事务操作的影响都将取消。
+	数据库操作：mysql不区分大小写，大小写都可以
+	
+	1.创建数据库：
+a. 直接创建：create  database  db_name；
+b. 先判断后创建：create  database  if  not  exists  db_name；
+c.指定编码方式：create  database  [if not exists]  db_name  [default character  set  utf8]；
+2.查看已有的数据库：show  databases；
+3.查看指定数据库的信息：show  create  database  db_name；
+4.打开指定的数据库：use  db_name；
+5.删除指定数据库：drop  database  [if exists]  db_name；
+
+1.创建数据表：
+create table [if not exists] tbl_name(
+	字段名称字段类型 [字段约束],
+	...
+) [engine=存储引擎 default charset=编码方式] ;
+说明：
+（1）表一般设置一个整数类型的自增主键
+（2）表的编码一般使用utf8
+2.查看当前数据库下已有数据表：show  tables;
+3.查看数据表的表结构：
+（1）desc  表名; 
+（2）descirbe  表名; 
+（3）show  columns  from  表名；
+4.查看指定数据表的详细信息（表创建时具体信息）：
+show  create  table  表名；
+5.删除指定的数据表：
+drop  table  [if exists]  表名；
+6.清空指定数据表：
+truncate  table  表名；	
+注：清空数据表后，会重置自增长值
+
+1.2.数据定义语言ddl之数据表相关操作2
+1.修改表名：alter table 表名  rename 新表名；
+2.添加字段：alter  table  表名  add  字段名字段类型  [字段约束]  [first | after]  [指定字段名]；
+3.删除字段：alter  table  表名  drop  字段名；
+4.修改字段：
+a.只修改字段类型和约束：alter  table  表名modify  字段名新字段类型 [新字段约束]；
+b.同时修改字段名及类型和约束：alter  table  表名  change  字段名新字段名新字段类型 [新字段约束];
+注：change与modify区别
+a. change用来整体修改字段名、类型和约束，不能只修改其中一个；
+b. modify只能修改字段类型和约束，不能修改字段名；
+5.添加字段的唯一性约束：alter  table  表名  add  [unique]  index(字段名)；
+6.添加字段的自定义唯一性约束：alter  table  表名  add  constraint  自定义约束名  unique  index(字段名)；
+7.删除字段的唯一性约束：alter  table  表名  drop  index 约束名；
+8.删除主键：alter table 表名  drop  primary  key；
+9.添加主键：alter  table  表名  add  [constraint 自定义主键名]  primary  key(字段名)；
+10.修改自增长起始值：alter  table  表名auto_increment = 起始值；
+
+1.3.数据操纵语言dml
+1.添加记录：
+a.添加单个：
+insert  [into]  表名[(字段名1, 字段名 n)]  values(值1, 值n)；
+a)字段名和值要一一对应，中间用逗号隔开
+b)添加含有主键和默认值字段的值时可以写default，主键还可写null
+c)含有主键或默认字段的字段名可不写
+b.添加多个：
+insert  [into]  表名[(字段名1, 字段名 n)]  values(值1, 值n), (值1, 值n)...；
+
+2.删除记录：
+delete   from   表名[where  条件]；
+
+3.修改记录：
+update   表名   set   字段1=值1，字段n=值n  [where  条件]；
+
+1.4.数据查询语言dql
+1.基本查询：
+select  *|字段名[as 别名]  from  表名[where  条件]；
+where的条件操作符：
+a.=  !=  <>><>=  <=  
+b. between...andnotbetween..and   in   not in
+c.and或&&or或||   
+d. is注：is一般情况下和null连用，比较该字段的值是否为空，如is null 或 is not null
+e.	like  模糊查询，如：%内容%、内容%、%内容、____(长度匹配，取决下划线个数)、__内容%
+2.记录不重复查询：
+select  distinct  字段名  from  表名[where  条件]；
+3.排序查询：
+order  by  字段名1  asc | desc[，字段名n  asc | desc]  
+注：desc为倒序，默认asc
+4.限制查询：
+limit  起始行数，显示行数		
+注：默认起始行数为0，可只写显示行数，等价于前n条记录
+5.聚合查询：
+group  by  字段1[，字段n][having  条件]
+a)group by表示要进行分类聚合的字段
+b)having表示对分类后的结果再进行条件过滤		
+注：where是聚合前就对记录过滤，having是聚合后再过滤
+6.内链接查询：仅选择出两张表中互相匹配的记录，即两张表的交集。
+a)select 表名1.字段名，表名2.字段名 from 表名1[as别名1]，表名2[as 别名2] where 表名1.字段名 = 表名2.字段名；
+b)select 表名1.字段名，表名2.字段名 from 表名1[as别名1] inner join 表名2[as 别名2] on 表名1.字段名 = 表名2.字段名;
+注：以上查询的后面都可加条件、排序、限制等。	
+	
+	
+-------------------线程：线程是进程中的一个实体，是进程的组成单元，是系统进行资源调度的最小单位。进程是系统进行资源分配的最小单元。
+	多线程务必要注意，主线程不能先于子线程退出。
+使用线程的优点：线程占用资源少，效率高，只占用必要的一点栈资源，而且没有不必要的数据拷贝。
+缺点：线程对共享资源的访问存在同步和互斥的问题。
+
+进程作为分配和管理资源的基本单位，而线程作为独立运行和独立调度的基本单位。
+
+线程操作：a.线程创建 pthread_t threadid;
+				     pthread_create(&threadid,NULL,thread_fun,&arg);
+					 void *thread_fun(void*arg);
+		  b.线程退出 pthread_exit(void*arg);//arg会在线程退出时，返回给主线程，传递数据的一种手段。
+		  c.线程等待 pthread_join(threadid,void**arg);//arg用来获取threadid代表的子线程退出的返回值。
+		  线程ID获取 pthread_t threadid = pthread_self();
+		  线程取消   pthread_cancel(threadid);
+		  
+线程的同步和互斥：
+		1)互斥：对共享资源的访问保证同一时间只有一个线程来访问，具有唯一性和排他性；不能保证对共享资源的访问具有有序访问。
+		2)同步：对共享资源的访问具有有序性。
+区别：互斥锁用于线程的互斥，信号量用于线程的同步。
+互斥量只能用于一个资源的互斥访问，而信号量可以实现多个同类资源的多线程互斥和同步。
+互斥量的加锁和解锁必须由同一线程对应使用，而信号量可以由一个线程释放，另一个线程得到。
+
+互斥--->互斥锁操作：pthread_mutex_t mutex;//声明一个互斥锁变量
+				a.互斥锁初始化：pthread_mutex_init(&mutex,NULL);
+				b.上锁和解锁： pthread_mutex_lock(&mutex);
+							 pthread_mutex_unlock(&mutex);
+							 //在对共享资源访问前先上锁，访问完成后解锁。
+				c.回收互斥锁：
+				pthread_mutex_destroy(&mutex);//交还给系统
+
+-----------------网络编程：
+
+1、网络分层的体系结构：
+ a.OSI的七层协议模型：由低到高分别为：物理、数据链路、网络、传输、会话表示应用
+ 
+				7 	应用层		提供网络应用程序 HTTP FTP Telnet HTTP
+				6	表示层		为应用层提供格式化的表示和转换数据服务 ASCII GIF
+				5	会话层		管理不同主机上各进程的对话
+				4	传输层  	提供端到端的数据传输 TCP UDP
+				3 	网络层 		实现数据包的存储和转发
+				2 	数据链路层   相邻接点之间传输数据
+				1	物理层		传输比特 
+2、TCP和UDP的区别：
+
+	a.TCP是一种面向连接、基于字节流的传输层通信协议，如打电话，而UDp是无连接的，数据报式通信协议。
+	b.TCP是可靠的网络数据传输，不丢失不重复，按序到达，UDP尽最大努力交付，不保证可靠。
+		现在经常对其优化改进，可做一下判断，双向握手，应答确认一下，确认机制、重传机制、滑动窗口。
+	c.TCP面向字节流，将数据看成一连串无结构的字节流，而UDP是面向报文的，UDP没有拥塞控制，实时性很好。
+	d.TCP点都点连接，UDP支持一对一，一对多，多对多交互通信。
+	e.TCP首部开销20字节，而UDP首部开销小，8字节。
+3、TCP三次握手的过程：可用wireshark
+	a.客户端发送SYN报文给服务器，进入SYN_SEND状态。
+	b.服务器端收到SYN报文，回应一个SYN,ACK,报文，进入SYN_RECV状态。
+	c.客户端收到服务器端的SYN报文，回应一个ACK报文，进入Established。
+
+	客户端 FIN 服务器端
+	       ACK FIN
+		   ACK 
+		   
+线程池：有限服务器资源 无线客户端访问
+
+LINUX的一个进程最多支持2024个线程
+
+线程管理器 thread pool  创建并管理线程池
+工作线程   poolwoker  线程池中实际执行任务的线程
+任务接口   task       每个任务必须实现的接口
+任务队列   taskqueue  存放没有处理的任务，提供一种缓冲机制
+
+线程池工作原理：在任务到来之前，创建一定数量的线程，形成一个线程池，放入空间队列，这些线程处于睡眠状态，即均未启动，不消耗CPU，只占较小的内存空间，同时创建一个任务池，所有请求任务全部放在任务池中，当请求到来，管理线程从空闲线程池中寻找空闲线程处理请求任务，执行完成后，继续寻找下一个要执行的任务。
+	
+编程流程：
+		UDp server  ：创建sock_DGRAM套接字 ---->绑定IP地址信息----->接收客户端消息----->发送消息给客户端------>关闭套接字
+		UDp client  : 创建套接字----->发送信息给服务器------>接收服务器端消息-------->关闭套接字 
+
+		int socket = socket(AF_INET,sock_DGRAM,0);
+		bind(socket,(struct socketaddr*)&server,sizeof(struct socketaddr_in));
+		recvfrom(socket,buf,sizeof(buf),0,(struct socketaddr*)&client,&len);
+		sendto(socket,buf,strlen(buf),0,(struct socketaddr*)&client,len);
+		close(socket);
+	TCP通信协议：
+	
+	服务器：创建socket--->绑定自己的IP地址---->监听客户端连接listen---->接收客户端的连接accept---->接收客户端的消息recv-->发送消息给客户端send----->关闭socket连接 close 
+	
+	int socket = socket(AF_INET,sock_STREAM,0);
+	bind(socket,(struct socketaddr*)&server,sizeof(struct socketaddr_in));
+	listen(socket,10);
+	int newsocket = accept(socket,(struct socketaddr*)&client,&len);
+	recv(socketnew,buf,sizeof(buf),0);
+	send(newsocket,buf,strlen(buf),0);
+	close(socket);close(newsocket);
+	
+	客户端： 创建socket----->连接服务器connect----->发送消息send---->接收消息recv---->关闭socket
+	
+	connect(int sockfd,struct socketaddr*,int addrlen);
+	
+	判断客户端断开连接： recv()返回小于等于0的时候，客户端断开连接。
+						 select()返回1，recv()读取的数据长度为0，则socket断开。
+	
+	
+	当一个类中没有申明任何一个成员变量和成员函数时，sizeof(A)的值为0吗？为什么//值为1，  那是被编译器插进去的一个char ，使得这个class的不同实体（object）在内存中配置独一无二的地址。     也就是说这个char是用来标识类的不同对象的。
+
+内联函数：提高程序运行时调用函数的效率。
+用关键字inline修饰，而内联函数在调用的时候，是将调用表达式用内联函数来替换，类似于宏定义。当这个函数在类的内部定义的时候，就可以不用inline关键字了。如：
+inline int add_int(int x,int y,int z)
+{
+	return x+y+z;
+}
+#include<stdio.h>
+
+int main(void)
+{
+
+	int a,b,c,d;
+	a = 10;
+	b = a++;
+	printf("a:%d,b:%d\n",a,b);//11,10
+	c = ++a;
+	printf("a:%d,c:%d\n",a,c);//12,12
+	d = 10*a++;
+
+	printf("b,c,d:%d,%d,%d\n",b,c,d);
+	return 0;
+}
+
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+
+int main()
+{
+
+	int a[5] = {1,2,3,4,5};
+	int *ptr = (int*)(&a+1);
+
+	printf("*(a+1):%d,*(ptr-1):%d\n",*(a+1),*(ptr-1));//2,5
+
+	return 0;
+}
+
+/*
+输出：2,5
+*(a+1)就是a[1],*(ptr-1)就是a[4],执行结果是2,5
+&a+1不是首地址+1，系统会认为加一个a数组的偏移，是偏移了一个数组的大小。
+int *ptr = (int*)(&a+1);
+则ptr实际是&(a[5]),也就是a+5;
+
+原因如下：
+	&a是数组指针，其类型为int (*)[5],而指针要加1要根据指针类型加上一定的值，
+	不同类型的指针+1之后增加的大小不同，a是长度为5的int 数组指针，所以要加5*sizeof(int);
+	所以ptr实际是a[5]，但是ptr与(&a+1)类型是不一样的，所以ptr-1只会减去sizeof(int),
+	a是数组首地址也就是a[0]的地址，&a是对象数组的首地址，a+1是数组下一个元素的地址，即a[1],
+	&a+1是下一个对象的地址，即a[5].
+
+
+*/
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+
+void getmemory(char**p)
+{
+	*p = (char*)malloc(100);
+	
+	strcpy(*p,"hello nihao");
+
+}
+
+int main()
+{
+	char * str = NULL;
+	getmemory(&str);
+	
+	printf("%s\n",str);
+	
+	free(str);
+	
+	return 0;
+}
+
+/*
+当形参和实参不是指针类型时，在该函数运行时，形参和实参是不同的变量，他们在内存中位于不同的位置，
+形参将实参的内容复制一份，在该函数运行结束的时候形参被释放，而实参内容不会改变。
+而如果函数的参数是指针类型变量,在调用该函数的过程中，传给函数的是实参的地址，在函数体内部使用的也是实参的地址，
+即使用的就是实参本身。所以在函数体内部可以改变实参的值。
+
+*/
+
+
+#include<iostream>
+
+using namespace std;
+
+
+int main()
+{
+	
+	float a = 1.0f;
+	cout<<"(int)a:"<<(int)a<<endl;
+	cout<<"(int&)a:"<<(int&)a<<endl;
+	cout<<boolalpha<<((int)a == (int&)a)<<endl;
+
+	float b = 0.0f;
+	cout<<"(int)b："<<(int)b<<endl;
+	cout<<"(int&)b："<<(int&)b<<endl;
+	cout<<boolalpha<<((int)b == (int&)b)<<endl;
+	return 0;
+}
+
+// 1 false 0 0 true
+
