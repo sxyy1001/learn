@@ -1,0 +1,58 @@
+程序core是指应用程序无法保持正常running状态而发生的崩溃行为。程序core时会生成相关的core-dump文件，是程序崩溃时程序状态的数据备份。core-dump文件中包含内存、处理器、寄存器、程序计数器、栈指针等状态信息。本文将介绍一些利用core-dump文件定位程序core原因的方法和技巧。
+一、程序Core定义及分类
+
+
+程序core是指应用程序无法保持正常running状态而发生的崩溃行为。程序core时会生成相关的core-dump文件，core-dump文件是程序崩溃时程序状态的状态数据备份。core-dump文件包含内存、处理器、寄存器、程序计数器、栈指针等状态信息。我们可以借助core-dump文件来分析定位程序Core的原因。
+
+GDB定位Core
+这一节将介绍从core文件打开到定位全流程中可能会遇到的问题以及解决技巧。
+
+1.1 Core文件
+core文件在哪里？
+查看“/proc/sys/kernel/core_pattern”确定core文件生成规则。
+
+
+
+1.2 变量打印
+
+程序debug过程中常常要查看各种变量（内存、寄存器、函数表等）的值是否正确，维持单独用一节介绍下常用的变量打印方法以及一些冷门小技巧。
+
+1.2.1 print命令
+print [Expression]
+print $[Previous value number]
+print {[Type]}[Address]
+print [First element]@[Element count]
+print /[Format] [Expression]
+
+
+Format格式：
+o - 8进制
+x - 16进制
+u - 无符号十进制
+t - 二进制
+f - 浮点数
+a - 地址
+c - 字符
+s - 字符串
+3.2.2 x命令
+x /<n/f/u>  <addr>
+n:是正整数，表示需要显示的内存单元的个数，即从当前地址向后显示n个内存单元的内容，
+一个内存单元的大小由第三个参数u定义。
+
+f:表示addr指向的内存内容的输出格式，s对应输出字符串，此处需特别注意输出整型数据的格式：
+  x 按十六进制格式显示变量.
+  d 按十进制格式显示变量。
+  u 按十进制格式显示无符号整型。
+  o 按八进制格式显示变量。
+  t 按二进制格式显示变量。
+  a 按十六进制格式显示变量。
+  c 按字符格式显示变量。
+  f 按浮点数格式显示变量。
+
+u:就是指以多少个字节作为一个内存单元-unit,默认为4。u还可以用被一些字符表示:
+  如b=1 byte, h=2 bytes,w=4 bytes,g=8 bytes.
+
+<addr>:表示内存地址。
+参考资料：
+汇编查看工具：https://godbolt.org/ https://cppinsights.io/
+标准GDB文档：https://sourceware.org/gdb/current/onlinedocs/gdb/
