@@ -70,7 +70,24 @@ C++面向对象
    a.引用就是某个变量的或对象的别名，本质还是地址操作，对引用的操作和对变量的操作，效果完全一样。
    b.声明一个引用的时候一定要对其初始化，一旦声明一个对象或变量的引用，则该引用将不能再被申请为其他的变量或对象的引用。
    c.引用不占内存空间。
-   d.不能建立数组的引用。 
+
+  #include <iostream>  
+  
+int main() {  
+    int arr[] = {1, 2, 3, 4, 5};  
+    int (&ref)[5] = arr; // 创建一个引用，指向数组 arr  
+  
+    // 通过引用访问数组元素  
+    std::cout << "arr[2] = " << arr[2] << std::endl;  
+    std::cout << "ref[2] = " << ref[2] << std::endl; // 输出同 arr[2]  
+  
+    // 修改数组元素  
+    ref[2] = 10;  
+    std::cout << "arr[2] after modification = " << arr[2] << std::endl; // 输出同 ref[2]  
+  
+    return 0;  
+}
+
 2、引用与指针的区别？
 	a.引用必须被初始化，不能为空，而指针可以为空。
 	b.引用初始化后不能改变，而指针可以随意改指向。
@@ -437,8 +454,6 @@ b)select 表名1.字段名，表名2.字段名 from 表名1[as别名1] inner joi
 		   
 线程池：有限服务器资源 无线客户端访问
 
-LINUX的一个进程最多支持2024个线程
-
 线程管理器 thread pool  创建并管理线程池
 工作线程   poolwoker  线程池中实际执行任务的线程
 任务接口   task       每个任务必须实现的接口
@@ -564,26 +579,22 @@ int main()
 
 */
 
-
-#include<iostream>
-
-using namespace std;
-
+#include<stdio.h>
 
 int main()
 {
+	int data = 100;
+	int *p = &data;
+	printf("data的地址是%p\n",&data);
+	printf("p 保存的是data的地址 %p, 间接访问的内容是data的值%d\n",p,*p);
 	
-	float a = 1.0f;
-	cout<<"(int)a:"<<(int)a<<endl;
-	cout<<"(int&)a:"<<(int&)a<<endl;
-	cout<<boolalpha<<((int)a == (int&)a)<<endl;
-
-	float b = 0.0f;
-	cout<<"(int)b："<<(int)b<<endl;
-	cout<<"(int&)b："<<(int&)b<<endl;
-	cout<<boolalpha<<((int)b == (int&)b)<<endl;
+	printf("p 的地址 %p\n",&p);
+	int **pp = &p;
+	printf("pp 保存p的地址 %p，间接访问p的值 %p，访问data %d\n", pp,*pp,**pp);
+	
 	return 0;
 }
 
-// 1 false 0 0 true
+
+--2023/12/27 updated
 
