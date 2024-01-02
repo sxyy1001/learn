@@ -603,7 +603,7 @@ int main()
 第二天又将剩下的桃子吃掉一半，又多吃了一个。
 以后每天都吃前一天剩下的一半零一个。
 到第10天在想吃的时候就剩一个桃子了,问第一天共摘下来多少个桃子？并反向打印每天所剩桃子数。
-x / 2 -1 = num;
+x/2 -1 = 1; 
 num /2  -1 = getPeachNumber(n+1);
 num/2 = getPeachNumber(n+1) + 1;
 num = (getPeachNumber(n + 1) +1)*2;
